@@ -1,21 +1,36 @@
 import reactIcon from './assets/react.svg';
 import CreateForm from "./components/CreateForm.jsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import todo from "./api/todo.js";
 
 const App = () => {
     const [list, setList] = useState([]);
-    
-    const addTodo = (content) => {
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        try {
+            const response = await todo.get('/api/todos');
+            setList(response.data);
+        }
+        catch (e) {
+            console.log(e.message);
+        }
+    }
+
+    const addTodo = async (content) => {
+        const response = await todo.post('/api/todos', {content});
+
         const updatedList = [
-            {content},
-            ...list
+            ...list,
+            response.data
         ];
 
         setList(updatedList);
     }
 
-    console.log(list);
-    
     return (<div>
             <div className="flex flex-row justify-center content-center mt-2 p-2">
                 <img src={reactIcon} alt="React" className="w-10 animate-spin-slow"/>
@@ -24,7 +39,7 @@ const App = () => {
             <div className="w-full">
                 <CreateForm onSubmit={addTodo}/>
                 <div>
-                    {list.map(item => <div key={item.content}>{item.content}</div>)}
+                    {list && list.map(item => <div key={item.content}>{item.content}</div>)}
                 </div>
             </div>
         </div>
