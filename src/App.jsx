@@ -2,6 +2,7 @@ import reactIcon from './assets/react.svg';
 import CreateForm from "./components/CreateForm.jsx";
 import {useEffect, useState} from "react";
 import todo from "./api/todo.js";
+import List from "./components/List.jsx";
 
 const App = () => {
     const [list, setList] = useState([]);
@@ -38,9 +39,7 @@ const App = () => {
             </div>
             <div className="w-full">
                 <CreateForm onSubmit={addTodo}/>
-                <div>
-                    {list && list.map(item => <div key={item.content}>{item.content}</div>)}
-                </div>
+                <List content={list}/>
             </div>
         </div>
     )
