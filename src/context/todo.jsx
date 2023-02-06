@@ -22,6 +22,14 @@ const reducer = (state, action) => {
                     return item.id !== action.payload
                 }),
             }
+        case 'done':
+            return {
+                ...state,
+                list: state.list.map((item) => {
+                    if (item.id === action.payload) return { ...item, done: true }
+                    return item;
+                })
+            }
         default:
             return state;
     }

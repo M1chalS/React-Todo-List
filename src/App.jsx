@@ -31,9 +31,10 @@ const App = () => {
                 <img src={ reactIcon } alt="React" className="w-10 animate-spin-slow"/>
                 <h1 className="text-4xl">Todo List🗂️</h1>
             </div>
-            <div className="w-full">
+            <div className="w-full flex-row">
                 <CreateForm onSubmit={ addTodo }/>
-                <List content={list}/>
+                <List content={list} title="To do" done={false}/>
+                <List content={list} title="Done" done/>
             </div>
         </div>
     );

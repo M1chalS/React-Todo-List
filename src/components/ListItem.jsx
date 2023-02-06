@@ -9,14 +9,19 @@ export const ListItem = ({ item }) => {
     const handleDone = async () => {
         try {
             const response = await todo.patch(`/api/todos/done/${ item.id }`);
-            dispatch({ type: 'remove', payload: response.data.id });
+            dispatch({ type: 'done', payload: response.data.id });
         } catch (e) {
             console.log(e.message);
         }
     };
 
-    const handleDelete = () => {
-        //TODO Logic for deleting item
+    const handleDelete = async () => {
+        try {
+            await todo.delete(`/api/todos/${ item.id }`);
+            dispatch({ type: 'remove', payload: item.id });
+        } catch (e) {
+            console.log(e.message);
+        }
     };
 
     let content;
