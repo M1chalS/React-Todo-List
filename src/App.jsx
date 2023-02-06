@@ -1,11 +1,12 @@
 import reactIcon from './assets/react.svg';
 import CreateForm from "./components/CreateForm.jsx";
-import {useEffect, useState} from "react";
+import { useContext, useEffect } from "react";
 import todo from "./api/todo.js";
+import TodoContext from "./context/todo.jsx";
 import List from "./components/List.jsx";
 
 const App = () => {
-    const [list, setList] = useState([]);
+    const { list, dispatch } = useContext(TodoContext);
 
     useEffect(() => {
         fetchData();
@@ -14,36 +15,29 @@ const App = () => {
     const fetchData = async () => {
         try {
             const response = await todo.get('/api/todos');
-            setList(response.data);
+            dispatch({ type: 'fetchAll', payload: response.data });
+        } catch (e) {
+            throw new Error(e.message);
         }
-        catch (e) {
-            console.log(e.message);
-        }
-    }
+    };
 
     const addTodo = async (content) => {
-        const response = await todo.post('/api/todos', {content});
-
-        const updatedList = [
-            ...list,
-            response.data
-        ];
-
-        setList(updatedList);
-    }
+        const response = await todo.post('/api/todos', { content });
+        dispatch({ type: 'add', payload: response.data });
+    };
 
     return (<div>
             <div className="flex flex-row justify-center content-center mt-2 p-2">
-                <img src={reactIcon} alt="React" className="w-10 animate-spin-slow"/>
+                <img src={ reactIcon } alt="React" className="w-10 animate-spin-slow"/>
                 <h1 className="text-4xl">Todo List🗂️</h1>
             </div>
             <div className="w-full">
-                <CreateForm onSubmit={addTodo}/>
+                <CreateForm onSubmit={ addTodo }/>
                 <List content={list}/>
             </div>
         </div>
-    )
+    );
 
-}
+};
 
 export default App;
