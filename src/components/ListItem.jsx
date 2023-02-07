@@ -1,10 +1,12 @@
-import { BsCheck, BsCheckCircleFill, MdDelete, MdOutlineDeleteOutline } from "react-icons/all";
+import { BsCheck, BsCheckCircleFill, MdDelete } from "react-icons/all";
 import todo from "../api/todo.js";
 import TodoContext from "../context/todo.jsx";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import classNames from "classnames";
 
-export const ListItem = ({ item }) => {
+export const ListItem = ({ item, editMode }) => {
+
+    const [ text, setText ] = useState(item.content);
     const { dispatch } = useContext(TodoContext);
     const handleDone = async () => {
         try {
@@ -27,25 +29,39 @@ export const ListItem = ({ item }) => {
     let content;
     if (!item.done) {
         content = <>
-            <BsCheck className="text-green-500 text-2xl cursor-pointer" onClick={ handleDone } title="Mark as done"/>
-            <MdOutlineDeleteOutline className="text-red-500 text-2xl cursor-pointer" onClick={ handleDelete }
-                                    title="Delete"/>
+            { editMode ?
+                <MdDelete className="text-red-500 text-2xl cursor-pointer" onClick={ handleDelete } title="Delete"/> :
+                <BsCheck className="text-green-500 text-2xl cursor-pointer" onClick={ handleDone }
+                         title="Mark as done"/> }
         </>;
     } else {
         content = <>
-            <BsCheckCircleFill title="Done" className="text-green-800 text-xl"/>
-            <MdDelete className="text-red-500 text-2xl cursor-pointer" onClick={ handleDelete } title="Delete"/>
+            { editMode ?
+                <MdDelete className="text-red-500 text-2xl cursor-pointer" onClick={ handleDelete } title="Delete"/> :
+                <BsCheckCircleFill title="Done" className="text-green-800 text-xl"/> }
         </>;
     }
 
     const mainClasses = classNames(
-        'my-2 p-2 border w-48 flex justify-between rounded',
-        { 'border-green-900': item.done, 'border-gray-500': !item.done }
+        'my-2 p-2 border w-72 flex justify-between rounded',
+        {
+            'border-green-900': item.done,
+            'border-gray-500': !item.done,
+            'border-yellow-700': editMode
+        }
     );
+
+    const handleBlur = () => {
+        console.log(text);
+    };
 
     return (
         <div className={ mainClasses }>
-            { item.content }
+            { !item.done && editMode ? <input className="w-60"
+                                              onChange={ (event) => setText(event.target.value) }
+                                              value={ text }
+                                              onBlur={ handleBlur }
+            /> : <p>{ item.content }</p> }
             <div className="flex justify-center items-center">
                 { content }
             </div>
