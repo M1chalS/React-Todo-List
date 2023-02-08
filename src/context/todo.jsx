@@ -15,6 +15,14 @@ const reducer = (state, action) => {
                 ...state,
                 list: [ ...state.list, action.payload ],
             }
+        case 'update':
+            return {
+                ...state,
+                list: state.list.map((item) => {
+                    if (item.id === action.payload.id) return action.payload
+                    return item;
+                })
+            }
         case 'remove':
             return {
                 ...state,

@@ -12,7 +12,7 @@ const List = ({ content, title, done }) => {
     return (
         <div className="flex flex-col items-center mt-4">
             <div className="w-72 text-green-700 flex flex-row justify-between">
-                <h3 className="ml-2 text-3xl">{ title }</h3>
+                <h3 className="ml-2 text-3xl font-semibold">{ title }</h3>
                 <MdEdit className="text-2xl text-yellow-600 cursor-pointer"
                         onClick={ handleEdit }
                 />

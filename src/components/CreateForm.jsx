@@ -22,7 +22,7 @@ const CreateForm = ({ onSubmit }) => {
                     onSubmit={handleSubmit}
                 >
                     <input value={content} onChange={handleChange} className="flex rounded-md"/>
-                    <button className="text-2xl cursor-pointer text-gray-600">
+                    <button className="text-2xl cursor-pointer text-gray-600 hover:scale-110">
                         <MdAdd />
                     </button>
                 </form>
