@@ -3,11 +3,14 @@ import todo from "../api/todo.js";
 import TodoContext from "../context/todo.jsx";
 import { useContext, useState } from "react";
 import classNames from "classnames";
+import Modal from "./Modal.jsx";
 
 export const ListItem = ({ item, editMode }) => {
 
     const [ text, setText ] = useState(item.content);
     const { dispatch } = useContext(TodoContext);
+
+    const [ showModal, setShowModal ] = useState(false);
     const handleDone = async () => {
         try {
             const response = await todo.patch(`/api/todos/done/${ item.id }`);
@@ -37,6 +40,10 @@ export const ListItem = ({ item, editMode }) => {
         }
     };
 
+    const handleShow = async () => {
+        setShowModal(true);
+    };
+
     let content;
     if (!item.done) {
         content = <>
@@ -55,7 +62,7 @@ export const ListItem = ({ item, editMode }) => {
     }
 
     const mainClasses = classNames(
-        'my-2 p-2 border w-72 flex justify-between rounded',
+        'h-auto my-2 p-2 border w-72 flex justify-between rounded',
         {
             'border-green-900': item.done,
             'border-gray-500': !item.done,
@@ -63,17 +70,32 @@ export const ListItem = ({ item, editMode }) => {
         }
     );
 
+    const handleClose = () => {
+        setShowModal(false);
+    };
+
     return (
         <div className={ mainClasses }>
+
             { !item.done && editMode ?
                 <input className="w-60"
                        onChange={ (event) => setText(event.target.value) }
                        value={ text }
                        onBlur={ handleBlur }
-                /> : <p>{ item.content }</p> }
+                /> : <a onClick={ handleShow } className="truncate w-60 cursor-pointer">{ item.content }</a> }
             <div className="flex justify-center items-center">
                 { content }
             </div>
+            { showModal && <Modal onClose={ handleClose } actionBar={ <button
+                onClick={ handleClose }>Ok</button> }>
+                <div className="flex justify-between">
+                    <div className="w-2/3">
+                        <h2 className="text-xl">Your assigment:</h2>
+                        <p className="h-auto break-words">{ item.content }</p>
+                    </div>
+                    {!item.done && <div className="text-xl">Done?{ content }</div>}
+                </div>
+            </Modal> }
         </div>
     );
 };

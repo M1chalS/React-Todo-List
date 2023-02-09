@@ -27,15 +27,24 @@ const App = () => {
     };
 
     return (<div>
-            <div className="flex flex-row justify-center content-center mt-2 p-2">
+            <header className="flex flex-row justify-center content-center mt-2 p-2">
                 <img src={ reactIcon } alt="React" className="w-10 animate-spin-slow"/>
                 <h1 className="text-4xl">Todo List🗂️</h1>
-            </div>
-            <div className="w-full flex-row">
+            </header>
+            <main className="w-full flex-row">
                 <CreateForm onSubmit={ addTodo }/>
                 <List content={list} title="To do" done={false}/>
                 <List content={list} title="Done" done/>
-            </div>
+            </main>
+            <footer className="mt-8 mb-1 ml-2 flex justify-start items-center h-auto fixed bottom-0">
+                <a href="https://github.com/M1chalS" target="_blank">
+                    <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+                         alt="Github"
+                         className="w-8"
+                    />
+                </a>
+                <p>Michał Szajner</p>
+            </footer>
         </div>
     );
 
