@@ -38,6 +38,14 @@ const reducer = (state, action) => {
                     return item;
                 })
             }
+        case 'undone':
+            return {
+                ...state,
+                list: state.list.map((item) => {
+                    if (item.id === action.payload) return { ...item, done: false }
+                    return item;
+                })
+            }
         default:
             return state;
     }

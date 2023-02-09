@@ -1,29 +1,29 @@
 import reactIcon from './assets/react.svg';
 import CreateForm from "./components/CreateForm.jsx";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import todo from "./api/todo.js";
 import TodoContext from "./context/todo.jsx";
 import List from "./components/List.jsx";
+import Skeleton from "./components/Skeleton.jsx";
 
 const App = () => {
     const { list, dispatch } = useContext(TodoContext);
+    const [ isLoading, setIsLoading ] = useState(false);
 
     useEffect(() => {
         fetchData();
     }, []);
 
     const fetchData = async () => {
+        setIsLoading(true);
         try {
             const response = await todo.get('/api/todos');
             dispatch({ type: 'fetchAll', payload: response.data });
+            setIsLoading(false);
         } catch (e) {
+            setIsLoading(false);
             throw new Error(e.message);
         }
-    };
-
-    const addTodo = async (content) => {
-        const response = await todo.post('/api/todos', { content });
-        dispatch({ type: 'add', payload: response.data });
     };
 
     return (<div>
@@ -32,9 +32,12 @@ const App = () => {
                 <h1 className="text-4xl">Todo List🗂️</h1>
             </header>
             <main className="w-full flex-row">
-                <CreateForm onSubmit={ addTodo }/>
-                <List content={list} title="To do" done={false}/>
-                <List content={list} title="Done" done/>
+                <CreateForm/>
+                {isLoading ? <Skeleton times={8}/> : <>
+                    <List content={list} title="To do" done={false}/>
+                    <List content={list} title="Done" done/>
+                </>
+                }
             </main>
             <footer className="mt-8 mb-1 ml-2 flex justify-start items-center h-auto fixed bottom-0">
                 <a href="https://github.com/M1chalS" target="_blank">

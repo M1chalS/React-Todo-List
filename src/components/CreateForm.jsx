@@ -1,17 +1,31 @@
 import {MdAdd} from "react-icons/all";
-import {useState} from "react";
+import { useContext, useState } from "react";
+import Button from "./Button.jsx";
+import todo from "../api/todo.js";
+import TodoContext from "../context/todo.jsx";
 
-const CreateForm = ({ onSubmit }) => {
+const CreateForm = () => {
     const [content, setContent] = useState("");
-
+    const { dispatch } = useContext(TodoContext);
+    const [ isLoading, setIsLoading ] = useState(false);
     const handleChange = (event) => {
         setContent(event.target.value);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        onSubmit(content);
-        setContent("");
+        if(content !== "") {
+            setIsLoading(true);
+            try {
+                const response = await todo.post('/api/todos', { content });
+                dispatch({ type: 'add', payload: response.data });
+                setContent("");
+                setIsLoading(false);
+            } catch (e) {
+                setIsLoading(false);
+                console.log(e.message);
+            }
+        }
     };
 
     return (
@@ -22,9 +36,9 @@ const CreateForm = ({ onSubmit }) => {
                     onSubmit={handleSubmit}
                 >
                     <input value={content} onChange={handleChange} className="flex rounded-md"/>
-                    <button className="text-2xl cursor-pointer text-gray-600 hover:scale-110">
+                    <Button className="text-2xl text-gray-600" loading={isLoading}>
                         <MdAdd />
-                    </button>
+                    </Button>
                 </form>
             </div>
         </div>
