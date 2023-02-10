@@ -26,7 +26,6 @@ export const ListItem = ({ item, editMode }) => {
             setIsLoading(false);
         }
     };
-
     const handleUndone = async () => {
         setIsLoading(true);
         try {
