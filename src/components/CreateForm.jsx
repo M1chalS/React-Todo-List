@@ -8,6 +8,7 @@ const CreateForm = () => {
     const [content, setContent] = useState("");
     const { dispatch } = useContext(TodoContext);
     const [ isLoading, setIsLoading ] = useState(false);
+    const [ error, setError ] = useState("");
     const handleChange = (event) => {
         setContent(event.target.value);
     };
@@ -21,14 +22,15 @@ const CreateForm = () => {
                 dispatch({ type: 'add', payload: response.data });
                 setContent("");
                 setIsLoading(false);
+                setError("");
             } catch (e) {
                 setIsLoading(false);
-                console.log(e.message);
+                setError("Error creating todo");
             }
         }
     };
 
-    return (
+    return (<>
         <div className="flex flex-row justify-center">
             <div className="border-2 border-solid border-gray-400 rounded-md">
                 <form
@@ -42,6 +44,8 @@ const CreateForm = () => {
                 </form>
             </div>
         </div>
+        <p className="text-red-600 flex justify-center">{error}</p>
+    </>
     );
 }
 

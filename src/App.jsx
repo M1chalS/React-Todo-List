@@ -9,6 +9,7 @@ import Skeleton from "./components/Skeleton.jsx";
 const App = () => {
     const { list, dispatch } = useContext(TodoContext);
     const [ isLoading, setIsLoading ] = useState(false);
+    const [ error, setError ] = useState("");
 
     useEffect(() => {
         fetchData();
@@ -22,7 +23,7 @@ const App = () => {
             setIsLoading(false);
         } catch (e) {
             setIsLoading(false);
-            throw new Error(e.message);
+            setError("Error fetching data");
         }
     };
 
@@ -33,6 +34,7 @@ const App = () => {
             </header>
             <main className="w-full flex-row">
                 <CreateForm/>
+                <p className="flex flex-col items-center text-red-600">{error}</p>
                 {isLoading ? <Skeleton times={8}/> : <>
                     <List content={list} title="To do" done={false}/>
                     <List content={list} title="Done" done/>

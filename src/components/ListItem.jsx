@@ -11,6 +11,7 @@ export const ListItem = ({ item, editMode }) => {
     const [ text, setText ] = useState(item.content);
     const { dispatch } = useContext(TodoContext);
     const [ isLoading, setIsLoading ] = useState(false);
+    const [ error, setError ] = useState("");
 
     const [ showModal, setShowModal ] = useState(false);
     const handleDone = async () => {
@@ -19,8 +20,9 @@ export const ListItem = ({ item, editMode }) => {
             const response = await todo.patch(`/api/todos/done/${ item.id }`);
             dispatch({ type: 'done', payload: response.data.id });
             setIsLoading(false);
+            setError("");
         } catch (e) {
-            console.log(e.message);
+            setError("Something went wrong...");
             setIsLoading(false);
         }
     };
@@ -31,8 +33,9 @@ export const ListItem = ({ item, editMode }) => {
             const response = await todo.patch(`/api/todos/undone/${ item.id }`);
             dispatch({ type: 'undone', payload: response.data.id });
             setIsLoading(false);
+            setError("");
         } catch (e) {
-            console.log(e.message);
+            setError("Something went wrong...");
             setIsLoading(false);
         }
     };
@@ -41,20 +44,22 @@ export const ListItem = ({ item, editMode }) => {
         try {
             await todo.delete(`/api/todos/${ item.id }`);
             dispatch({ type: 'remove', payload: item.id });
+            setError("");
         } catch (e) {
-            console.log(e.message);
+            setError("Error deleting todo...");
         }
     };
 
     const handleBlur = async () => {
-        if(text !== "") {
+        if (text !== "") {
             try {
                 const response = await todo.patch(`/api/todos/${ item.id }`, {
                     content: text
                 });
                 dispatch({ type: 'update', payload: response.data });
+                setError("");
             } catch (e) {
-                console.log(e.message);
+                setError("Error updating todo...");
             }
         }
     };
@@ -72,11 +77,11 @@ export const ListItem = ({ item, editMode }) => {
                 <Button className="text-green-500 text-2xl"
                         onClick={ handleDone }
                         title="Mark as done"
-                        loading={isLoading}
+                        loading={ isLoading }
                 >
                     <BsCheck/>
                 </Button>
-                 }
+            }
         </>;
     } else {
         content = <>
@@ -99,18 +104,21 @@ export const ListItem = ({ item, editMode }) => {
         setShowModal(false);
     };
 
-    return (
-        <div className={ mainClasses }>
+    return (<>
+            <div className={ mainClasses }>
 
-            { !item.done && editMode ?
-                <input className="w-60 border rounded-md"
-                       onChange={ (event) => setText(event.target.value) }
-                       value={ text }
-                       onBlur={ handleBlur }
-                /> : <a onClick={ handleShow } className="truncate w-60 cursor-pointer">{ item.content }</a> }
-            <div className="flex justify-center items-center">
-                { content }
+                { !item.done && editMode ?
+                    <input className="w-60 border rounded-md"
+                           onChange={ (event) => setText(event.target.value) }
+                           value={ text }
+                           onBlur={ handleBlur }
+                    /> : <a onClick={ handleShow } className="truncate w-60 cursor-pointer">{ item.content }</a> }
+                <div className="flex justify-center items-center">
+                    { content }
+                </div>
+
             </div>
+            <p className="text-red-600">{ error }</p>
             { showModal && <Modal onClose={ handleClose } actionBar={ <button
                 onClick={ handleClose } className="text-lg hover:scale-105">Ok</button> }>
                 <div className="flex justify-between">
@@ -118,9 +126,10 @@ export const ListItem = ({ item, editMode }) => {
                         <h2 className="text-xl">Your assigment:</h2>
                         <p className="h-auto break-words">{ item.content }</p>
                     </div>
-                    {item.done ? <Button className="text-xl" onClick={handleUndone}>Not done</Button> : <Button className="text-xl" onClick={handleDone}>Done?</Button>}
+                    { item.done ? <Button className="text-xl" onClick={ handleUndone }>Not done</Button> :
+                        <Button className="text-xl" onClick={ handleDone }>Done?</Button> }
                 </div>
             </Modal> }
-        </div>
+        </>
     );
 };
