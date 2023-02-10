@@ -21,6 +21,7 @@ const App = () => {
             const response = await todo.get('/api/todos');
             dispatch({ type: 'fetchAll', payload: response.data });
             setIsLoading(false);
+            setError("");
         } catch (e) {
             setIsLoading(false);
             setError("Error fetching data");
